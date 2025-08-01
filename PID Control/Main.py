@@ -3,31 +3,18 @@ import matplotlib.pyplot as plt
 import scipy.integrate as spi 
 from Simple_PID import PID_controller
 
+# Instantiate the PID Object
+pid = PID_controller(Kp=1.0, Ki=0.3, kd=0.1, setpoint=0)
+
+# Set your external force applied to the system as a dictionary
+applied_force = {'F': 0}
 
 # The following equations were derived previously 
     
 t_span = np.array([0,20])
 z = np.array([100, 0])
 
-def state(t,z):
-    
-    # Unpack the state vector or initial conditions
-    x = z[0]
-    v = z[1]
-    
-    # Parameters
-    m = 5
-    k = 1
-    
-    # Input
-    F = 10
-    
-    x_prime = v
-    v_prime = -(k/m)*x + F/m
-    
-    z_prime = [x_prime, v_prime]
-    
-    return z_prime
+
 
 sim = spi.solve_ivp(state, t_span, z,t_eval=np.arange(0,20,.1))
 

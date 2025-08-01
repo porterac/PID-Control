@@ -1,0 +1,26 @@
+def state(t,z):
+    
+    # Unpack the state vector or initial conditions
+    x = z[0]
+    v = z[1]
+
+    ''' 
+    or unpack like this:
+    x, v = z
+    where z is the state vector [position, velocity]
+    '''
+    
+    # Parameters
+    m = 5
+    k = 1
+    
+    dt = 0.1 # Time step for PID update
+    control_force = pid.update(current_value=x, dt=dt)
+    total_force = control_force + applied_force['F']
+
+    x_prime = v
+    v_prime = -(k/m)*x + total_force/m
+    
+    z_prime = [x_prime, v_prime]
+    
+    return z_prime
