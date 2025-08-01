@@ -1,0 +1,9 @@
+import numpy as np 
+
+setting_value = 255
+current_value = 0
+error = setting_value - current_value
+
+while error != 0:
+    current_value += 1 
+    error = setting_value - current_value
