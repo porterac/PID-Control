@@ -6,9 +6,6 @@ class PID_controller:
         self.setpoint = setpoint
         self.previous_error = 0
         self.integral = 0
-        self.current_value = 0
-        self.time = 0
-        self.history = []
 
     def update(self, current_value, dt):
         error = self.setpoint - current_value

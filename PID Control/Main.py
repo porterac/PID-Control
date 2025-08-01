@@ -2,34 +2,61 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import scipy.integrate as spi 
 from Simple_PID import PID_controller
+from matplotlib.animation import FuncAnimation
 
-# Instantiate the PID Object
-pid = PID_controller(Kp=1.0, Ki=0.3, kd=0.1, setpoint=0)
+# Define your state function
+def state(t,z):
+    
+    # Unpack the state vector or initial conditions
+    x = z[0]
+    v = z[1]
 
-# Set your external force applied to the system as a dictionary
+    ''' 
+    or unpack like this:
+    x, v = z
+    where z is the state vector [position, velocity]
+    '''
+    
+    # Parameters
+    m = 5
+    k = 1
+    
+    dt = 0.1 # Time step for PID update
+    control_force = pid.update(x, dt)
+    total_force = control_force + applied_force['F']
+
+    #total_force = 10
+    # The following equations were derived previously 
+    x_prime = v
+    v_prime = -(k/m)*x + total_force/m
+    
+    z_prime = [x_prime, v_prime]
+    
+    return z_prime
+
+
+# Run inital simulation
+pid = PID_controller(Kp=1.0, Ki=0.3, Kd=0.1, setpoint=0)
 applied_force = {'F': 0}
 
-# The following equations were derived previously 
-    
-t_span = np.array([0,20])
+# Initial state: [position, velocity]
 z = np.array([100, 0])
 
+dt = 0.1  # timestep in seconds
+t_span = [0,20]
+times = np.arange(t_span[0], t_span[1], dt)
 
+sim = spi.solve_ivp(state, t_span, z, t_eval=times)
 
-sim = spi.solve_ivp(state, t_span, z,t_eval=np.arange(0,20,.1))
-
-def figure1():
-    plt.figure()
-    plt.subplot(2,1,1)
-    plt.plot(sim.t, sim.y[0])
-    plt.xlabel('Time (s)')
-    plt.ylabel('Position (m)')
-    plt.subplot(2,1,2)
-    plt.plot(sim.t, sim.y[1], c="r")
-    plt.xlabel('Time (s)')
-    plt.ylabel('Velocity (m/s)')
-    plt.show()
-    
-    return 
-
-figure1()
+# Create you figure object
+fig, ax = plt.subplots(nrows=2, sharex=True)
+ax[0].plot(sim.t, sim.y[0])
+ax[0].set_title('Position')
+ax[0].plot([0,20],[0,0],ls='--',c='black')
+ax[0].set_ylabel('m')
+ax[1].plot(sim.t, sim.y[1], c='r')
+ax[1].plot([0,20],[0,0],ls='--',c='black')
+ax[1].set_title('Velocity')
+ax[1].set_xlabel('Time')
+ax[1].set_ylabel('m/s')
+plt.show()
