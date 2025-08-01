@@ -9,49 +9,45 @@ error = setting_value - current_value
 while error != 0:
     current_value += 1 
     error = setting_value - current_value
+
+    # The following equations were derived previously 
     
-# Initilize tspan and initial conditions
-zspan = np.array([0,30])
-y_initial = np.array([0,0])
+t_span = np.array([0,20])
+z = np.array([100, 0])
 
-zeval = np.linspace(0,30,1000) # this is used for graphing purposes
+def state(t,z):
+    
+    x = z[0]
+    v = z[1]
+    
+    # Parameters
+    m = 5
+    k = 1
+    
+    # Input
+    F = 10
+    
+    x_prime = v
+    v_prime = -(k/m)*x + F/m
+    
+    z_prime = [x_prime, v_prime]
+    
+    return z_prime
 
-# Step 2: Make a function with your ODE's defined
-def mast(z,y):
- 
-    # initilize any parameters
-    L = 30
-    E = 1.25e8 
-    I = 0.05
+sim = spi.solve_ivp(state, t_span, z,t_eval=np.arange(0,20,.1))
 
-    if z <= 10:
-        f = 1
-    else:
-        f = 2
+def figure1():
+    plt.figure()
+    plt.subplot(2,1,1)
+    plt.plot(sim.t, sim.y[0])
+    plt.xlabel('Time (s)')
+    plt.ylabel('Position (m)')
+    plt.subplot(2,1,2)
+    plt.plot(sim.t, sim.y[1], c="r")
+    plt.xlabel('Time (s)')
+    plt.ylabel('Velocity (m/s)')
+    plt.show()
+    
+    return 
 
-    # Define your equations
-
-    # Prepacking y
-    y_prime = np.zeros(len(y))
-
-    y_prime[0] = y[1]
-    y_prime[1] = (f / 2*E*I)*(L-z)**2
-
-    '''   
-    # Just another method to do the same thing as above
-    # Post packing y
-    dy = y[1]
-    ddy = (f / 2*E*I)*(L-z)**2
-
-    y_prime = [dy, ddy]'''
-
-    return y_prime
-
-# Step 3: Call Sovle_ivp and plug in your paramameters
-sol = spi.solve_ivp(mast,zspan,y_initial, t_eval=zeval)
-
-# Step 4: Unpack and plot
-plt.plot(sol.t,sol.y[0])
-plt.xlabel("Length along the mast")
-plt.ylabel("Deflection")
-plt.show()
+figure1()
