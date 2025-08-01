@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import scipy.integrate as spi 
 
+
+# Getting a basic idea of how the controller works
 setting_value = 255
 current_value = 0
 error = setting_value - current_value
@@ -10,13 +12,15 @@ while error != 0:
     current_value += 1 
     error = setting_value - current_value
 
-    # The following equations were derived previously 
+
+# The following equations were derived previously 
     
 t_span = np.array([0,20])
 z = np.array([100, 0])
 
 def state(t,z):
     
+    # Unpack the state vector or initial conditions
     x = z[0]
     v = z[1]
     
