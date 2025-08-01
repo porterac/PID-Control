@@ -36,7 +36,7 @@ def state(t,z):
 
 
 # Run inital simulation
-pid = PID_controller(Kp=1.0, Ki=0.3, Kd=0.1, setpoint=0)
+pid = PID_controller(Kp=1.0, Ki=0.3, Kd=0.1, setpoint=10)
 applied_force = {'F': 0}
 
 # Initial state: [position, velocity]
