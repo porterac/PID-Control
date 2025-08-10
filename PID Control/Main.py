@@ -21,6 +21,10 @@ def state(t,z):
     m = 5
     k = 1
     
+
+    pid = PID_controller(Kp=.5, Ki=0.45, Kd=0.15, setpoint=0)
+    applied_force = {'F': 10}
+
     dt = 0.1 # Time step for PID update
     control_force = pid.update(x, dt)
     total_force = control_force + applied_force['F']
@@ -34,10 +38,6 @@ def state(t,z):
     
     return z_prime
 
-
-# Run inital simulation
-pid = PID_controller(Kp=1.0, Ki=0.3, Kd=0.1, setpoint=10)
-applied_force = {'F': 0}
 
 # Initial state: [position, velocity]
 z = np.array([100, 0])
