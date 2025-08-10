@@ -20,13 +20,10 @@ def state(t,z):
     # Parameters
     m = 5
     k = 1
-    
-
-    pid = PID_controller(Kp=.5, Ki=0.45, Kd=0.15, setpoint=0)
     applied_force = {'F': 10}
 
     dt = 0.1 # Time step for PID update
-    control_force = pid.update(x, dt)
+    control_force = update(0, x,1, .5, .2, dt)
     total_force = control_force + applied_force['F']
 
     #total_force = 10
@@ -37,6 +34,27 @@ def state(t,z):
     z_prime = [x_prime, v_prime]
     
     return z_prime
+
+def update(setpoint, current_position, Kp, Ki, Kd, dt):
+    # Error Calculation
+    error = setpoint - current_position
+
+    # Set current error to previous error
+    previous_error = error
+
+    # Integral Calculation
+    integral = error * dt
+
+    # Derivative Calculation
+    if dt > 0: 
+        derivative = (error - previous_error) / dt 
+    else:
+        derivative = 0
+
+    output = (Kp * error) + (Ki * integral) + (Kd * derivative)
+    
+    
+    return output
 
 
 # Initial state: [position, velocity]
