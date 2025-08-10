@@ -1,19 +1,76 @@
-class PID_controller:
-    def __init__(self, Kp, Ki, Kd, setpoint=0):
-        self.Kp = Kp
-        self.Ki = Ki
-        self.Kd = Kd
-        self.setpoint = setpoint
-        self.previous_error = 0
-        self.integral = 0
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
-    def update(self, current_value, dt):
-        error = self.setpoint - current_value
-        self.integral += error * dt
-        derivative = (error - self.previous_error) / dt if dt > 0 else 0
-        
-        output = (self.Kp * error) + (self.Ki * self.integral) + (self.Kd * derivative)
-        
-        self.previous_error = error
-        
-        return output
+# PID state variables
+integral = 0.0
+previous_error = 0.0
+
+def update_pid(setpoint, current_position, Kp, Ki, Kd, dt):
+    global integral, previous_error
+    error = setpoint - current_position
+    integral += error * dt
+    derivative = (error - previous_error) / dt
+    output = Kp * error + Ki * integral + Kd * derivative
+    previous_error = error
+    return output, error
+
+# System parameters
+m = 5.0   # mass
+k = 1.0   # spring constant
+dt = 0.02 # simulation time step
+t_end = 50
+setpoint = 0.0
+
+# Initial conditions
+t = 0.0
+x = 10.0  # initial position
+v = 0.0  # initial velocity
+
+# Data storage for plotting
+times = []
+positions = []
+velocities = []
+
+# --- Matplotlib setup ---
+fig, ax = plt.subplots(2, sharex=True)
+line_pos, = ax[0].plot([], [], lw=2)
+line_vel, = ax[1].plot([], [], lw=2, color='red')
+
+ax[0].set_ylabel("Position (m)")
+ax[1].set_ylabel("Velocity (m/s)")
+ax[1].set_xlabel("Time (s)")
+
+ax[0].axhline(0, color='k', linestyle='--')
+ax[1].axhline(0, color='k', linestyle='--')
+
+ax[0].set_xlim(0, t_end)
+ax[0].set_ylim(-6, 6)
+ax[1].set_ylim(-6, 6)
+
+# --- Animation update function ---
+def animate(frame):
+    global t, x, v
+
+    # PID control force
+    control_force, _ = update_pid(setpoint, x, Kp=100, Ki=25, Kd=50, dt=dt)
+
+    # Physics update (Euler integration)
+    a = -(k/m) * x + control_force / m
+    v += a * dt
+    x += v * dt
+    t += dt
+
+    # Save data
+    times.append(t)
+    positions.append(x)
+    velocities.append(v)
+
+    # Update lines
+    line_pos.set_data(times, positions)
+    line_vel.set_data(times, velocities)
+
+    return line_pos, line_vel
+
+ani = FuncAnimation(fig, animate, frames=int(t_end/dt), interval=dt*1000, blit=True)
+plt.show()

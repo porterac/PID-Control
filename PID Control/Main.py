@@ -1,19 +1,21 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
 import scipy.integrate as spi 
-from Simple_PID import PID_controller
 from matplotlib.animation import FuncAnimation
 
 integral = 0
 previous_error = 0
+last_t = None
 
 
 # Define your state function
 def state(t,z):
+    global last_t
     
     # Unpack the state vector or initial conditions
     x = z[0]
     v = z[1]
+    E = z[2]
 
     ''' 
     or unpack like this:
@@ -25,15 +27,21 @@ def state(t,z):
     m = 5
     k = 1
 
-    dt = 0.1 # Time step for PID update
-    control_force = update(0, x,50, 5, 0, dt)
+    # Compute dt from solver time
+    if last_t is None:
+        dt = 0.0
+    else:
+        dt = t - last_t
+    last_t = t
 
-    #total_force = 10
+    control_force, error = update(0, x, 1, .5, 0, dt)
+
     # The following equations were derived previously 
     x_prime = v
     v_prime = -(k/m)*x + control_force/m
+    E_prime = error
     
-    z_prime = [x_prime, v_prime]
+    z_prime = [x_prime, v_prime, E_prime]
     
     return z_prime
 
@@ -57,11 +65,11 @@ def update(setpoint, current_position, Kp, Ki, Kd, dt):
     previous_error = error
     
     
-    return output
+    return output, error
 
 
 # Initial state: [position, velocity]
-z = np.array([100, 0])
+z = np.array([5, 0, 0])
 
 dt = 0.1  # timestep in seconds
 t_span = [0,20]
