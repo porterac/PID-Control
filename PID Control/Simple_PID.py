@@ -20,7 +20,7 @@ m = 5.0   # mass
 k = 1.0   # spring constant
 dt = 0.02 # simulation time step
 t_end = 50
-setpoint = 0.0
+setpoint = 5
 
 # Initial conditions
 t = 0.0
