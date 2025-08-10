@@ -4,6 +4,10 @@ import scipy.integrate as spi
 from Simple_PID import PID_controller
 from matplotlib.animation import FuncAnimation
 
+integral = 0
+previous_error = 0
+
+
 # Define your state function
 def state(t,z):
     
@@ -20,30 +24,26 @@ def state(t,z):
     # Parameters
     m = 5
     k = 1
-    applied_force = {'F': 10}
 
     dt = 0.1 # Time step for PID update
-    control_force = update(0, x,1, .5, .2, dt)
-    total_force = control_force + applied_force['F']
+    control_force = update(0, x,50, 5, 0, dt)
 
     #total_force = 10
     # The following equations were derived previously 
     x_prime = v
-    v_prime = -(k/m)*x + total_force/m
+    v_prime = -(k/m)*x + control_force/m
     
     z_prime = [x_prime, v_prime]
     
     return z_prime
 
 def update(setpoint, current_position, Kp, Ki, Kd, dt):
+    global integral, previous_error
     # Error Calculation
     error = setpoint - current_position
 
-    # Set current error to previous error
-    previous_error = error
-
     # Integral Calculation
-    integral = error * dt
+    integral += error * dt
 
     # Derivative Calculation
     if dt > 0: 
@@ -52,6 +52,9 @@ def update(setpoint, current_position, Kp, Ki, Kd, dt):
         derivative = 0
 
     output = (Kp * error) + (Ki * integral) + (Kd * derivative)
+
+    # Set current error to previous error
+    previous_error = error
     
     
     return output
