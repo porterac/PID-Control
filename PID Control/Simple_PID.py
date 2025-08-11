@@ -20,7 +20,7 @@ m = 5.0   # mass
 k = 1.0   # spring constant
 dt = 0.02 # simulation time step
 t_end = 50
-setpoint = 5
+setpoint = 0
 
 # Initial conditions
 t = 0.0
@@ -53,7 +53,7 @@ def animate(frame):
     global t, x, v
 
     # PID control force
-    control_force, _ = update_pid(setpoint, x, Kp=100, Ki=25, Kd=50, dt=dt)
+    control_force, _ = update_pid(setpoint, x, Kp=100, Ki=50, Kd=50, dt=dt)
 
     # Physics update (Euler integration)
     a = -(k/m) * x + control_force / m
