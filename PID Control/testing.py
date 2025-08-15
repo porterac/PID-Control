@@ -1,14 +1,22 @@
-import keyboard
+from pynput import keyboard
 
-'''while True:
-    if keyboard.is_pressed('a'):
-        print("You pressed a")
-    elif keyboard.is_pressed('b'):
-        print("You pressed b")
-    elif keyboard.is_pressed('esc'):
-        break'''
+def on_press(key):
+    try:
+        print('alphanumeric key {0} pressed'.format(
+            key.char))
+    except AttributeError:
+        print('special key {0} pressed'.format(
+            key))
 
-events = keyboard.record('esc')
+def on_release(key):
+    print('{0} released'.format(
+        key))
+    if key == keyboard.Key.esc:
+        # Stop listener
+        return False
 
-keyboard.play(events)
-
+# Collect events until released
+with keyboard.Listener(
+        on_press=on_press,
+        on_release=on_release) as listener:
+    listener.join()
