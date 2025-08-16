@@ -20,18 +20,25 @@ def update_pid(setpoint, current_position, Kp, Ki, Kd, dt):
 def on_press(key):
     global setpoint
     try:
-        if key.char == 'u':   # increase setpoint
+        if key.char == 'i':   # increase setpoint
             setpoint += 2
             print(f"Setpoint increased to {setpoint}")
-        elif key.char == 'd': # decrease setpoint
+        elif key.char == 'k': # decrease setpoint
             setpoint -= 2
+            print(f"Setpoint decreased to {setpoint}")
+        elif key.char == 'l': # decrease setpoint
+            setpoint += 5
+            print(f"Setpoint decreased to {setpoint}")
+        elif key.char == 'j': # decrease setpoint
+            setpoint -= 5
             print(f"Setpoint decreased to {setpoint}")
     except AttributeError:
         if key == keyboard.Key.esc:
             print("Escape pressed, closing plot...")
             plt.close()
 
-listener = keyboard.Listener( on_press=on_press)
+# listener for keyboard events
+listener = keyboard.Listener(on_press=on_press)
 listener.start()
 
 # System parameters
@@ -39,7 +46,6 @@ m = 5.0   # mass
 k = 1.0   # spring constant
 dt = 0.02 # simulation time step
 t_end = 50
-setpoint = 0
 
 # Initial conditions
 t = 0.0
@@ -64,8 +70,8 @@ ax[0].axhline(0, color='k', linestyle='--')
 ax[1].axhline(0, color='k', linestyle='--')
 
 ax[0].set_xlim(0, t_end)
-ax[0].set_ylim(-6, 6)
-ax[1].set_ylim(-6, 6)
+ax[0].set_ylim(-10, 10)
+ax[1].set_ylim(-10, 10)
 
 # --- Animation update function ---
 def animate(frame):
