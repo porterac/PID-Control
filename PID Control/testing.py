@@ -2,9 +2,9 @@ from pynput import keyboard
 
 def on_press(key):
     try:
-        print('alphanumeric key {0} pressed'.format(key.char))
+        print(f'alphanumeric key {key.char} pressed')
     except AttributeError:
-        print('special key {0} pressed'.format(key))
+        print(f'special key {key} pressed')
 
 def on_release(key):
     print(f'{key} released')

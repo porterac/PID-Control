@@ -20,16 +20,16 @@ def update_pid(setpoint, current_position, Kp, Ki, Kd, dt):
 def on_press(key):
     global setpoint
     try:
-        if key.char == 'i':   # increase setpoint
+        if key == keyboard.Key.up:
             setpoint += 2
             print(f"Setpoint increased to {setpoint}")
-        elif key.char == 'k': # decrease setpoint
+        elif key == keyboard.Key.down:
             setpoint -= 2
             print(f"Setpoint decreased to {setpoint}")
-        elif key.char == 'l': # decrease setpoint
+        elif key == keyboard.Key.left:
             setpoint += 5
             print(f"Setpoint decreased to {setpoint}")
-        elif key.char == 'j': # decrease setpoint
+        elif key == keyboard.Key.right:
             setpoint -= 5
             print(f"Setpoint decreased to {setpoint}")
     except AttributeError:
@@ -50,7 +50,7 @@ t_end = 10
 # Initial conditions
 t = 0.0
 x = 10.0  # initial position
-v = 5.0  # initial velocity
+v = 0.0  # initial velocity
 
 # Data storage for plotting
 times = []
