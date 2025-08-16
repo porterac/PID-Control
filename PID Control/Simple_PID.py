@@ -1,10 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+from pynput import keyboard
 
 # PID state variables
 integral = 0.0
 previous_error = 0.0
+setpoint = 0.0
 
 def update_pid(setpoint, current_position, Kp, Ki, Kd, dt):
     global integral, previous_error
@@ -14,6 +16,23 @@ def update_pid(setpoint, current_position, Kp, Ki, Kd, dt):
     output = Kp * error + Ki * integral + Kd * derivative
     previous_error = error
     return output, error
+
+def on_press(key):
+    global setpoint
+    try:
+        if key.char == 'u':   # increase setpoint
+            setpoint += 2
+            print(f"Setpoint increased to {setpoint}")
+        elif key.char == 'd': # decrease setpoint
+            setpoint -= 2
+            print(f"Setpoint decreased to {setpoint}")
+    except AttributeError:
+        if key == keyboard.Key.esc:
+            print("Escape pressed, closing plot...")
+            plt.close()
+
+listener = keyboard.Listener( on_press=on_press)
+listener.start()
 
 # System parameters
 m = 5.0   # mass
@@ -25,7 +44,7 @@ setpoint = 0
 # Initial conditions
 t = 0.0
 x = 10.0  # initial position
-v = 0.0  # initial velocity
+v = 5.0  # initial velocity
 
 # Data storage for plotting
 times = []
@@ -50,7 +69,7 @@ ax[1].set_ylim(-6, 6)
 
 # --- Animation update function ---
 def animate(frame):
-    global t, x, v
+    global t, x, v, setpoint
 
     # PID control force
     control_force, _ = update_pid(setpoint, x, Kp=100, Ki=50, Kd=50, dt=dt)
