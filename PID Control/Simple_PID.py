@@ -45,11 +45,11 @@ listener.start()
 m = 5.0   # mass
 k = 1.0   # spring constant
 dt = 0.02 # simulation time step
-t_end = 10
+t_end = 30
 
 # Initial conditions
 t = 0.0
-x = 10.0  # initial position
+x = 5.0  # initial position
 v = 0.0  # initial velocity
 
 # Data storage for plotting
@@ -99,4 +99,4 @@ def animate(frame):
 
 ani = FuncAnimation(fig, animate, frames=int(t_end/dt), interval=dt*1000, blit=True)
 plt.show()
-ani.save("my_animation.gif", writer='pillow')
+#ani.save("my_animation.gif", writer='pillow')
