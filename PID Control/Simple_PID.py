@@ -78,9 +78,9 @@ def animate(frame):
     global t, x, v, setpoint
 
     # PID control force
-    control_force, _ = update_pid(setpoint, x, Kp=1, Ki=.5, Kd=.5, dt=dt)
+    control_force, _ = update_pid(setpoint, x, Kp=100, Ki=50, Kd=50, dt=dt)
 
-    # Physics update (Euler integration)
+    # Physics update Euler integration
     a = -(k/m) * x + control_force / m
     v += a * dt
     x += v * dt
